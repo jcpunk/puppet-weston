@@ -1,0 +1,17 @@
+<%- |
+  Hash[String, Variant[Hash, Undef]] $stanzas = {}
+| -%>
+#
+# This file managed by Puppet - DO NOT EDIT
+#
+<% $stanzas.keys.sort.each | $section | { -%>
+
+[<%= $section %>]
+<% $stanzas[$section].keys.sort.each | $key | { -%>
+<% if $stanzas[$section][$key] =~ Array { -%>
+<%= $key %>=<%= $stanzas[$section][$key].join(', ') %>
+<% } elsif $stanzas[$section][$key] != undef {-%>
+<%= $key %>=<%= $stanzas[$section][$key] %>
+<% } -%>
+<% } -%>
+<% } -%>

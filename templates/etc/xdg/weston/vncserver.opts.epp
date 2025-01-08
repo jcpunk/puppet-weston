@@ -1,0 +1,7 @@
+<%- |
+  Optional[Array[String[1]]] $options = []
+| -%>
+#
+# This file managed by Puppet - DO NOT EDIT
+#
+OPTS="<%= $options.unique.sort.join(' ') %>"
