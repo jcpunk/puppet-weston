@@ -31,7 +31,7 @@ if [ -z "${DISPLAY}" ]; then
     exit 1
 fi
 
-if [ ${DISPLAY} -lt 5000 ]; then
+if [ ${DISPLAY} -lt 5900 ]; then
     DISPLAY=$(($DISPLAY + 5900))
 fi
 

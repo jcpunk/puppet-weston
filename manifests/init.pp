@@ -13,13 +13,13 @@
 #   Should we write out a global weston config?
 # @param weston_ini_path
 #   Where is the global weston.ini
-# @weston_ini_owner
+# @param weston_ini_owner
 #   Probably root
-# @weston_ini_group
+# @param weston_ini_group
 #   Probably root
-# @weston_ini_mode
+# @param weston_ini_mode
 #   This should be world readable
-# @weston_ini_settings
+# @param weston_ini_settings
 #   A hash of the settings you want.
 #   weston::weston_ini_settings:
 #     shell:

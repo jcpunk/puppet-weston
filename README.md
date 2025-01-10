@@ -1,12 +1,11 @@
 # weston
 
-Manage weston and its features
+Manage weston and remote desktops
 
 ## Table of Contents
 
 1. [Description](#description)
 1. [Setup - The basics of getting started with weston](#setup)
-    * [What weston affects](#what-weston-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with weston](#beginning-with-weston)
 1. [Usage - Configuration options and additional functionality](#usage)
@@ -32,22 +31,48 @@ To install the weston desktop, just include the `weston` module.
 ## Usage
 
 ### VNC Desktops
-Include usage examples for common use cases in the **Usage** section. Show your
-users how to use your module to solve problems, and be sure to include code
-examples. Include three to five examples of the most important or common tasks a
-user can accomplish with your module. Show users how to accomplish more complex
-tasks that involve different types, classes, and functions working in tandem.
+
+To create a VNC session include `weston::vnc_server` and set the following parameters:
+```yaml
+weston::vnc_server::vnc_sessions:
+  userA:
+    comment: Sometimes you've gotta write it down
+    displaynumber: 1
+    ensure: running
+    enable: true
+    user_can_control_service: true
+    extra_users_can_control_service:
+      - userB
+  userB:
+    displaynumber: 5902
+```
+
+By default the service starting the VNC session is unmanaged.  You can change the defaults via:
+
+```yaml
+weston::vnc_server::default_vnc_service_ensure: running
+weston::vnc_server::default_vnc_service_enable: true
+```
+
+By default users cannot manage the systemd service for their VNC session.  You can grant them access to run `systemctl stop/start/restart weston-vncserver@${username}` one user at a time.  If you would prefer to do it automatically for all users set:
+
+```yaml
+weston::vnc_server::default_user_can_control_service: true
+```
 
 ## Limitations
 
-In the Limitations section, list any incompatibilities, known issues, or other
-warnings.
+This module expect VNC to use ports starting at 5900.
+
+For working with VNC desktops, you'll probably want to setup a `~/.config/weston.ini` with the following options:
+
+```ini
+[shell]
+locking=false
+```
+
+as the VNC session will already be protected by PAM.
 
 ## Development
 
 See the linked repo from metadata.json
-
-
-[1]: https://puppet.com/docs/pdk/latest/pdk_generating_modules.html
-[2]: https://puppet.com/docs/puppet/latest/puppet_strings.html
-[3]: https://puppet.com/docs/puppet/latest/puppet_strings_style.html

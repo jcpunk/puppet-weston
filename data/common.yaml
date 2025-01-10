@@ -1,3 +1,2 @@
 ---
-weston::vnc_server::default_vnc_service_ensure: running
-weston::vnc_server::default_vnc_service_enable: true
+{}

@@ -37,7 +37,7 @@ describe 'weston' do
           .with_owner('root')
           .with_group('root')
           .with_mode('0644')
-          .with_content(%r{^\[a]$})
+          .with_content(%r{^\[a\]$})
           .with_content(%r{^b=c$})
       }
     end
@@ -76,7 +76,7 @@ describe 'weston' do
           .with_owner('root')
           .with_group('root')
           .with_mode('0644')
-          .with_content(%r{^\[a]$})
+          .with_content(%r{^\[a\]$})
           .with_content(%r{^b=c$})
       }
     end

@@ -1,5 +1,14 @@
 # @summary Setup weston VNC sessions
 #
+# @param manage_vnc_start_script
+#   Do we manage the start script?
+# @param manage_vnc_options_file
+#   Do we manage the vnc options file?
+# @param manage_vnc_users_file
+#   Do we manage the vnc users file?
+# @param manage_vnc_polkit_file
+#   Do we manage the vnc polkit file?
+#
 # @param vnc_start_script
 #   The script that starts weston in VNC mode
 # @param vnc_options_file
@@ -64,8 +73,8 @@ class weston::vnc_server (
   String $vnc_start_script_mode = '0755',
   Boolean $manage_vnc_options_file = true,
   Stdlib::Absolutepath $vnc_options_file = '/etc/xdg/weston/vncserver.opts',
-  Array[String[1]] $vnc_server_options = [],
   String $vnc_options_file_mode = '0644',
+  Array[String[1]] $vnc_server_options = [],
   Boolean $manage_vnc_users_file = true,
   Stdlib::Absolutepath $vnc_users_file = '/etc/xdg/weston/vncserver.users',
   String $vnc_users_file_mode = '0644',
@@ -75,8 +84,8 @@ class weston::vnc_server (
   String $systemd_template_endswith = '.service',
 
   Boolean $manage_vnc_services = true,
-  Optional[Stdlib::Ensure::Service] $default_vnc_service_ensure,
-  Optional[Boolean] $default_vnc_service_enable,
+  Optional[Enum['running', 'stopped']] $default_vnc_service_ensure = undef,
+  Optional[Boolean] $default_vnc_service_enable = undef,
 
   Boolean $manage_vnc_polkit_file = true,
   Stdlib::Absolutepath $vnc_polkit_file = '/etc/polkit-1/rules.d/25-puppet-weston-vnc_server.rules',
@@ -84,7 +93,7 @@ class weston::vnc_server (
   Boolean $default_user_can_control_service = false,
   Array[String[1]] $default_extra_users_can_control_service = [],
 
-  Hash[String, Hash[Enum['displaynumber', 'user_can_control_service', 'comment', 'ensure', 'enable', 'extra_users_can_manage'], Variant[Array[String], String, Integer, Boolean, Undef]]] $vnc_sessions = {},
+  Hash[String, Hash[Enum['displaynumber', 'user_can_control_service', 'comment', 'ensure', 'enable', 'extra_users_can_control_service'], Variant[Array[String], String, Integer, Boolean, Undef]]] $vnc_sessions = {},
 ) inherits weston {
   if $manage_vnc_start_script {
     file { $vnc_start_script:
@@ -136,10 +145,10 @@ class weston::vnc_server (
 
       if $manage_vnc_polkit_file {
         if $user_can_control_service {
-          if 'extra_users_can_control_service' in $vnc_servers[$username] {
-            $extra_users_to_grant = unique(flatten([$extra_users_can_control_service, $vnc_servers[$username]['extra_users_can_control_service']]))
+          if 'extra_users_can_control_service' in $vnc_sessions[$username] {
+            $extra_users_to_grant = sort(unique(flatten([$default_extra_users_can_control_service, $vnc_sessions[$username]['extra_users_can_control_service']])))
           } else {
-            $extra_users_to_grant = unique(flatten([$extra_users_can_control_service]))
+            $extra_users_to_grant = sort(unique(flatten([$default_extra_users_can_control_service])))
           }
         } else {
           $extra_users_to_grant = []
@@ -148,9 +157,15 @@ class weston::vnc_server (
         $extra_users_to_grant = 'polkit rules for vnc disabled in puppet'
       }
 
+      if $vnc_sessions[$username]['displaynumber'] < 5900 {
+        $real_displaynumber = $vnc_sessions[$username]['displaynumber'] + 5900
+      } else {
+        $real_displaynumber = $vnc_sessions[$username]['displaynumber']
+      }
+
       concat::fragment { "vnc user ${username}":
-        target => $vnc_users_file,
-        conent => "# ${comment}\n# non-root users who can control service for ${username}: ${extra_users_to_grant}\n:${vnc_sessions[$username]['displaynumber']}=${username}\n",
+        target  => $vnc_users_file,
+        content => "# ${comment}\n# non-root users who can control service for ${username}: ${extra_users_to_grant}\n:${real_displaynumber}=${username}\n",
       }
     }
   }
@@ -165,7 +180,7 @@ class weston::vnc_server (
       service_entry => {
         'Type'           => 'notify',
         'User'           => '%I',
-        'PamName'        => 'login',
+        'PAMName'        => 'login',
         'Environment'    => 'XDG_SESSION_TYPE=wayland',
         'ExecStart'      => "${vnc_start_script} %I",
         'StandardOutput' => 'journal',
@@ -239,10 +254,10 @@ class weston::vnc_server (
       }
 
       if $user_can_control_service {
-        if 'extra_users_can_control_service' in $vnc_servers[$username] {
-          $extra_users_to_grant = unique(flatten([$extra_users_can_control_service, $vnc_servers[$username]['extra_users_can_control_service']]))
+        if 'extra_users_can_control_service' in $vnc_sessions[$username] {
+          $extra_users_to_grant = sort(unique(flatten([$default_extra_users_can_control_service, $vnc_sessions[$username]['extra_users_can_control_service'], $username])))
         } else {
-          $extra_users_to_grant = unique(flatten([$extra_users_can_control_service]))
+          $extra_users_to_grant = sort(unique(flatten([$default_extra_users_can_control_service, $username])))
         }
 
         concat::fragment { "polkit entry for ${username} vnc service":
