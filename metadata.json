@@ -5,6 +5,8 @@
   "summary": "Install and manage weston",
   "license": "Apache-2.0",
   "source": "https://github.com/jcpunk/puppet-weston",
+  "project_page": "https://github.com/jcpunk/puppet-weston",
+  "issues_url": "https://github.com/jcpunk/puppet-weston/issues",
   "dependencies": [
     {
       "name": "puppetlabs/concat",
@@ -45,11 +47,13 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
+
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
+
       ]
     }
   ],
