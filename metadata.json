@@ -11,6 +11,10 @@
       "version_requirement": ">= 4.2.0 < 10.0.0"
     },
     {
+      "name": "jcpunk/novnc",
+      "version_requirement": ">= 0.1.0 < 1.0.0"
+    },
+    {
       "name": "puppetlabs/stdlib",
       "version_requirement": ">= 9.0.0 < 10.0.0"
     },
@@ -23,7 +27,6 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "9",
         "10"
       ]
     },
