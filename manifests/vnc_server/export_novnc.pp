@@ -5,7 +5,7 @@
 # @param vnc_servers
 #   Hash of vnc_servers to export.
 #   You probably should just let inheritance do the work here
-class weston::vnc_server::export (
+class weston::vnc_server::export_novnc (
   String $vnc_server_hostname = 'localhost',
   Hash $vnc_sessions = $weston::vnc_server::vnc_sessions,
 ) inherits weston::vnc_server {
