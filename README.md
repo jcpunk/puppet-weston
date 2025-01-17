@@ -69,6 +69,11 @@ For working with VNC desktops, you'll probably want to setup a `~/.config/weston
 ```ini
 [shell]
 locking=false
+
+[vnc]
+name=yourvncsessionname
+mode=1280x720 # this is 720p
+resizeable=true
 ```
 
 as the VNC session will already be protected by PAM.
