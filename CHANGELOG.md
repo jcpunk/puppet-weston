@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.1
+
+**Features**
+Add `polkit.Result.NOT_HANDLED` to polkit rules
+
 ## Release 0.2.0
 
 **Breaking Changes**
