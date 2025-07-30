@@ -13,6 +13,11 @@ polkit.addRule(function(action, subject) {
                   return polkit.Result.YES;
                 }
             }
+            if (verb == "enable" || verb == "disable") {
+                if (subject.user == "<%= $username %>") {
+                  return polkit.Result.YES;
+                }
+            }
         }
     }
     return polkit.Result.NOT_HANDLED;
