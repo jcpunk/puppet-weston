@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.4.1
+
+**Bugfixes**
+RHEL8 doesn't support `include`
+
 ## Release 0.4.0
 
 **Bugfixes**
