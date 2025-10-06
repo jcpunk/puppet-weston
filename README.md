@@ -32,7 +32,7 @@ To install the weston desktop, just include the `weston` module.
 
 ### VNC Desktops
 
-To create a VNC session include `weston::vnc_server` and set the following parameters:
+To create a system VNC session include `weston::vnc_server` and set the following parameters:
 ```yaml
 weston::vnc_server::vnc_sessions:
   userA:
@@ -60,9 +60,15 @@ By default users cannot manage the systemd service for their VNC session.  You c
 weston::vnc_server::default_user_can_control_service: true
 ```
 
+NOTE: this does not permit `systemctl {enable,disable} weston-vncserver@${username}` for non-root users.
+
 ## Limitations
 
 This module expect VNC to use ports starting at 5900.
+
+`systemctl --user` services are not supported by the VNC service integration in this module.
+
+The PAM configuration for weston VNC is not managed by this module.
 
 For working with VNC desktops, you'll probably want to setup a `~/.config/weston.ini` with the following options:
 
