@@ -61,6 +61,7 @@ describe 'weston' do
           'manage_packages' => false,
           'package_names' => ['asdf', 'jkl'],
           'packages_ensure' => 'latest',
+          'manage_weston_ini_dir' => true,
           'manage_weston_ini' => true,
           'weston_ini_path' => '/tmp/foo.ini',
           'weston_ini_settings' => { 'a' => { 'b' => 'c' } }
@@ -69,7 +70,14 @@ describe 'weston' do
 
       it { is_expected.to compile.with_all_deps }
       it { is_expected.to have_package_resource_count(0) }
-      it { is_expected.to have_file_resource_count(1) }
+      it { is_expected.to have_file_resource_count(2) }
+      it {
+        is_expected.to contain_file('/tmp')
+          .with_ensure('directory')
+          .with_owner('root')
+          .with_group('root')
+          .with_mode('0644')
+      }
       it {
         is_expected.to contain_file('/tmp/foo.ini')
           .with_ensure('file')

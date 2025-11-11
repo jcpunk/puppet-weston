@@ -9,6 +9,8 @@
 # @param packages_ensure
 #   What to ensure for the packages
 #
+# @param manage_weston_ini_dir
+#   Should we create the containing directory for weston.ini?
 # @param manage_weston_ini
 #   Should we write out a global weston config?
 # @param weston_ini_path
@@ -32,6 +34,7 @@ class weston (
   Array[String[1]] $package_names = ['weston'],
   Stdlib::Ensure::Package $packages_ensure = 'present',
   Boolean $manage_weston_ini = false,
+  Boolean $manage_weston_ini_dir = false,
   Stdlib::Absolutepath $weston_ini_path = '/etc/xdg/weston/weston.ini',
   String $weston_ini_owner = 'root',
   String $weston_ini_group = 'root',
@@ -41,6 +44,15 @@ class weston (
   if $manage_packages {
     package { $package_names:
       ensure => $packages_ensure,
+    }
+  }
+
+  if $manage_weston_ini_dir {
+    file { dirname($weston_ini_path):
+      ensure => 'directory',
+      owner  => $weston_ini_owner,
+      group  => $weston_ini_group,
+      mode   => $weston_ini_mode,
     }
   }
 

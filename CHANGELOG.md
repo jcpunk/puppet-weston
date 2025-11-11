@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.5.0
+
+**Features**
+Add ability to manage directory containing weston.ini automatically
+
 ## Release 0.4.1
 
 **Bugfixes**

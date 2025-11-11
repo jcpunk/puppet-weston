@@ -2,7 +2,7 @@
 #
 # @param vnc_server_hostname
 #   Hostname to use as the default server target
-# @param vnc_servers
+# @param vnc_sessions
 #   Hash of vnc_servers to export.
 #   You probably should just let inheritance do the work here
 class weston::vnc_server::export_novnc (

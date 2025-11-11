@@ -8,6 +8,7 @@
 
 * [`weston`](#weston): Install the weston desktop
 * [`weston::vnc_server`](#weston--vnc_server): Setup weston VNC sessions
+* [`weston::vnc_server::export_novnc`](#weston--vnc_server--export_novnc): Map defined VNC servers into NOVNC client
 
 ## Classes
 
@@ -30,6 +31,7 @@ The following parameters are available in the `weston` class:
 * [`manage_packages`](#-weston--manage_packages)
 * [`package_names`](#-weston--package_names)
 * [`packages_ensure`](#-weston--packages_ensure)
+* [`manage_weston_ini_dir`](#-weston--manage_weston_ini_dir)
 * [`manage_weston_ini`](#-weston--manage_weston_ini)
 * [`weston_ini_path`](#-weston--weston_ini_path)
 * [`weston_ini_owner`](#-weston--weston_ini_owner)
@@ -60,6 +62,14 @@ Data type: `Stdlib::Ensure::Package`
 What to ensure for the packages
 
 Default value: `'present'`
+
+##### <a name="-weston--manage_weston_ini_dir"></a>`manage_weston_ini_dir`
+
+Data type: `Boolean`
+
+Should we create the containing directory for weston.ini?
+
+Default value: `false`
 
 ##### <a name="-weston--manage_weston_ini"></a>`manage_weston_ini`
 
@@ -334,4 +344,32 @@ weston::vnc_server::vnc_sessions:
     user_can_control_service: false
 
 Default value: `{}`
+
+### <a name="weston--vnc_server--export_novnc"></a>`weston::vnc_server::export_novnc`
+
+Map defined VNC servers into NOVNC client
+
+#### Parameters
+
+The following parameters are available in the `weston::vnc_server::export_novnc` class:
+
+* [`vnc_server_hostname`](#-weston--vnc_server--export_novnc--vnc_server_hostname)
+* [`vnc_sessions`](#-weston--vnc_server--export_novnc--vnc_sessions)
+
+##### <a name="-weston--vnc_server--export_novnc--vnc_server_hostname"></a>`vnc_server_hostname`
+
+Data type: `String`
+
+Hostname to use as the default server target
+
+Default value: `'localhost'`
+
+##### <a name="-weston--vnc_server--export_novnc--vnc_sessions"></a>`vnc_sessions`
+
+Data type: `Hash`
+
+Hash of vnc_servers to export.
+You probably should just let inheritance do the work here
+
+Default value: `$weston::vnc_server::vnc_sessions`
 
