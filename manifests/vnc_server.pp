@@ -101,7 +101,7 @@ class weston::vnc_server (
       owner  => 'root',
       group  => 'root',
       mode   => $vnc_start_script_mode,
-      source => 'puppet://modules/modules/weston/usr/libexec/weston-vnc',
+      source => 'puppet:///modules/weston/usr/libexec/weston-vnc',
     }
   }
 
