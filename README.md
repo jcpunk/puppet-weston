@@ -69,8 +69,6 @@ systemctl {stop,start,restart} weston-vncserver@`whoami`.service
 
 ## Limitations
 
-This module expect VNC to use ports starting at 5900.
-
 `systemctl --user` services are not supported by the NoVNC service integration in this module. They are dynamic and thus not known in advance.
 
 The PAM configuration for weston VNC is not managed by this module.

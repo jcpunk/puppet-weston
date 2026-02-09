@@ -1,5 +1,7 @@
 # @summary Setup weston VNC sessions
 #
+# @param vnc_min_port
+#   What is the lowest VNC port we want to allow
 # @param manage_vnc_start_script
 #   Do we manage the start script?
 # @param manage_vnc_options_file
@@ -75,6 +77,7 @@
 #       user_can_control_service: false
 #
 class weston::vnc_server (
+  Integer[1,65535] $vnc_min_port = 5900,
   Boolean $manage_vnc_start_script = true,
   Stdlib::Absolutepath $vnc_start_script = '/usr/libexec/weston-vnc',
   String $vnc_start_script_mode = '0755',
@@ -108,11 +111,11 @@ class weston::vnc_server (
 ) inherits weston {
   if $manage_vnc_start_script {
     file { $vnc_start_script:
-      ensure => 'file',
-      owner  => 'root',
-      group  => 'root',
-      mode   => $vnc_start_script_mode,
-      source => 'puppet:///modules/weston/usr/libexec/weston-vnc',
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => $vnc_start_script_mode,
+      content => epp('weston/usr/libexec/weston-vnc.epp', { 'vnc_min_port' => $vnc_min_port }),
     }
   }
 
@@ -212,8 +215,8 @@ class weston::vnc_server (
         $extra_users_to_grant = 'polkit rules for vnc disabled in puppet'
       }
 
-      if $vnc_sessions[$username]['displaynumber'] < 5900 {
-        $real_displaynumber = $vnc_sessions[$username]['displaynumber'] + 5900
+      if $vnc_sessions[$username]['displaynumber'] < $vnc_min_port {
+        $real_displaynumber = $vnc_sessions[$username]['displaynumber'] + $vnc_min_port
       } else {
         $real_displaynumber = $vnc_sessions[$username]['displaynumber']
       }

@@ -130,6 +130,7 @@ Setup weston VNC sessions
 
 The following parameters are available in the `weston::vnc_server` class:
 
+* [`vnc_min_port`](#-weston--vnc_server--vnc_min_port)
 * [`manage_vnc_start_script`](#-weston--vnc_server--manage_vnc_start_script)
 * [`manage_vnc_options_file`](#-weston--vnc_server--manage_vnc_options_file)
 * [`manage_vnc_users_file`](#-weston--vnc_server--manage_vnc_users_file)
@@ -155,6 +156,14 @@ The following parameters are available in the `weston::vnc_server` class:
 * [`default_user_can_control_service`](#-weston--vnc_server--default_user_can_control_service)
 * [`default_extra_users_can_control_service`](#-weston--vnc_server--default_extra_users_can_control_service)
 * [`vnc_sessions`](#-weston--vnc_server--vnc_sessions)
+
+##### <a name="-weston--vnc_server--vnc_min_port"></a>`vnc_min_port`
+
+Data type: `Integer[1,65535]`
+
+What is the lowest VNC port we want to allow
+
+Default value: `5900`
 
 ##### <a name="-weston--vnc_server--manage_vnc_start_script"></a>`manage_vnc_start_script`
 

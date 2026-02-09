@@ -1,3 +1,6 @@
+<%- |
+  Integer[1,65535] $vnc_min_port = 5900,
+| -%>
 #!/bin/bash
 
 #
@@ -52,8 +55,8 @@ if [[ -z $PORT ]]; then
 
     DISPLAY_NUM=$(cut -d= -f1 <<<"$DISPLAY_LINE" | tr -d ':')
 
-    if ((DISPLAY_NUM < 5900)); then
-        PORT=$((DISPLAY_NUM + 5900))
+    if ((DISPLAY_NUM < <%= $vnc_min_port %>)); then
+        PORT=$((DISPLAY_NUM + <%= $vnc_min_port %>))
     else
         PORT=$DISPLAY_NUM
     fi
@@ -64,8 +67,8 @@ else
         error_exit "Invalid port number: ${PORT}"
     fi
 
-    DISPLAY_NUM=$((PORT - 5900))
-    ((DISPLAY_NUM >= 0)) || error_exit "Port number ${PORT} is invalid (must be >= 5900)"
+    DISPLAY_NUM=$((PORT - <%= $vnc_min_port %>))
+    ((DISPLAY_NUM >= 0)) || error_exit "Port number ${PORT} is invalid (must be >= <%= $vnc_min_port %>)"
 
     if [[ -f $USERSFILE ]]; then
         ASSIGNED_USER=$(grep -E "^:${PORT}=|^:${DISPLAY_NUM}=" "$USERSFILE" | head -1 | cut -d= -f2)

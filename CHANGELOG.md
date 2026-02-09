@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## Release 0.6.0
 
 **Features**
+You can now set the minimum vnc port (default is still 5900)
 Now sets up a `systemd --user` service that can be run without needing a central config
 
 NOTE: this changes the "internal api" for how `/usr/libexec/weston-vnc` is called
