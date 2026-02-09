@@ -67,7 +67,7 @@
     "vnc",
     "wayland"
   ],
-  "pdk-version": "3.6.0 (gcf442ed)",
-  "template-url": "pdk-default#3.6.0",
-  "template-ref": "tags/3.6.0-0-gfa96b82"
+  "pdk-version": "3.6.1 (ga18bc44)",
+  "template-url": "pdk-default#3.6.1",
+  "template-ref": "tags/3.6.1-0-gb9426e5"
 }
