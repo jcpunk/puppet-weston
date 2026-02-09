@@ -140,7 +140,6 @@ class weston::vnc_server (
       service_entry => {
         'Type'           => 'notify',
         'User'           => '%I',
-        'PAMName'        => 'login',
         'Environment'    => 'XDG_SESSION_TYPE=wayland',
         'ExecStart'      => $vnc_start_script,
         'StandardOutput' => 'journal',

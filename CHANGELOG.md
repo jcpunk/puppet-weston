@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.6.1
+
+**Bugfixes**
+User mode doesn't support PAMName
+
 ## Release 0.6.0
 
 **Features**
