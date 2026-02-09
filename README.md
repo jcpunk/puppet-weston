@@ -62,11 +62,16 @@ weston::vnc_server::default_user_can_control_service: true
 
 NOTE: this does not permit `systemctl {enable,disable} weston-vncserver@${username}` for non-root users.
 
+If you've enabled `user_can_control_service` then the listed users can run:
+```shell
+systemctl {stop,start,restart} weston-vncserver@`whoami`.service
+```
+
 ## Limitations
 
 This module expect VNC to use ports starting at 5900.
 
-`systemctl --user` services are not supported by the VNC service integration in this module.
+`systemctl --user` services are not supported by the NoVNC service integration in this module. They are dynamic and thus not known in advance.
 
 The PAM configuration for weston VNC is not managed by this module.
 

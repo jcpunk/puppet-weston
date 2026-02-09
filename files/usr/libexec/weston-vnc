@@ -7,32 +7,74 @@
 USERSFILE="/etc/xdg/weston/vncserver.users"
 ENVFILE="/etc/xdg/weston/vncserver.opts"
 
-if [ $# -ne 1 ]; then
-    echo "Syntax:" >&2
-    echo "    $0 <user>" >&2
+usage() {
+    echo "Usage: $0 [--port <port>]"
     exit 1
+}
+
+OPTS=$(getopt -o '' --long port: -n "$0" -- "$@") || usage
+eval set -- "$OPTS"
+
+PORT=""
+while true; do
+    case "$1" in
+    --port)
+        PORT="$2"
+        shift 2
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        usage
+        ;;
+    esac
+done
+
+USERNAME=$(whoami)
+
+if [[ -f $ENVFILE ]]; then
+    # shellcheck source=/dev/null
+    source "$ENVFILE"
 fi
 
-if [ -f ${ENVFILE} ]; then
-    source $ENVFILE
-fi
-
-if [ ! -f "${USERSFILE}" ]; then
-    echo "Users file ${USERSFILE} missing" >&2
+error_exit() {
+    echo "$1" >&2
     exit 1
+}
+
+if [[ -z $PORT ]]; then
+    [[ -f $USERSFILE ]] || error_exit "Users file ${USERSFILE} missing"
+
+    DISPLAY_LINE=$(grep "=${USERNAME}$" "$USERSFILE" | head -1) || true
+    [[ -n $DISPLAY_LINE ]] || error_exit "No display configured for user '${USERNAME}' in ${USERSFILE}, must pass --port"
+
+    DISPLAY_NUM=$(cut -d= -f1 <<<"$DISPLAY_LINE" | tr -d ':')
+
+    if ((DISPLAY_NUM < 5900)); then
+        PORT=$((DISPLAY_NUM + 5900))
+    else
+        PORT=$DISPLAY_NUM
+    fi
+    unset DISPLAY_LINE
+    unset DISPLAY_NUM
+else
+    if ! [[ $PORT =~ ^[0-9]+$ ]]; then
+        error_exit "Invalid port number: ${PORT}"
+    fi
+
+    DISPLAY_NUM=$((PORT - 5900))
+    ((DISPLAY_NUM >= 0)) || error_exit "Port number ${PORT} is invalid (must be >= 5900)"
+
+    if [[ -f $USERSFILE ]]; then
+        ASSIGNED_USER=$(grep -E "^:${PORT}=|^:${DISPLAY_NUM}=" "$USERSFILE" | head -1 | cut -d= -f2)
+        if [[ -n $ASSIGNED_USER && $ASSIGNED_USER != $USERNAME ]]; then
+            error_exit "Port ${PORT} is already assigned to user '${ASSIGNED_USER}'"
+        fi
+        unset ASSIGNED_USER
+    fi
+    unset DISPLAY_NUM
 fi
 
-USER="$1"
-
-DISPLAY=$(grep "=${USER}" "${USERSFILE}" | cut -d= -f1 | tr -d : | head -1)
-
-if [ -z "${DISPLAY}" ]; then
-    echo "No user configured for display ${DISPLAY} in ${USERSFILE}" >&2
-    exit 1
-fi
-
-if [ ${DISPLAY} -lt 5900 ]; then
-    DISPLAY=$(($DISPLAY + 5900))
-fi
-
-exec weston --backend=vnc --modules=systemd-notify.so --port=${DISPLAY} ${OPTS}
+exec weston --backend=vnc --modules=systemd-notify.so --port="$PORT" ${OPTS}

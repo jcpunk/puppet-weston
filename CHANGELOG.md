@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.6.0
+
+**Features**
+Now sets up a `systemd --user` service that can be run without needing a central config
+
+NOTE: this changes the "internal api" for how `/usr/libexec/weston-vnc` is called
+
 ## Release 0.5.1
 
 **Bugfixes**

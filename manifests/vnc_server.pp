@@ -41,6 +41,13 @@
 # @param systemd_template_endswith
 #   This should always be `.service` unless you're up to something weird
 #
+# @param manage_systemd_user_unit_file
+#   Should this module setup the systemd user template unit
+# @param systemd_user_template_startswith
+#   What is the 'unit name' of the user service
+# @param systemd_user_template_endswith
+#   This should always be `.service` unless you're up to something weird
+#
 # @param vnc_polkit_file
 #   A policy kit file you can use to let users restart their own sessions via systemctl --system
 # @param vnc_polkit_file_mode
@@ -83,6 +90,10 @@ class weston::vnc_server (
   String $systemd_template_startswith = 'weston-vncserver',
   String $systemd_template_endswith = '.service',
 
+  Boolean $manage_systemd_user_unit_file = true,
+  String $systemd_user_template_startswith = 'weston-user-vncserver',
+  String $systemd_user_template_endswith = '.service',
+
   Boolean $manage_vnc_services = true,
   Optional[Enum['running', 'stopped']] $default_vnc_service_ensure = undef,
   Optional[Boolean] $default_vnc_service_enable = undef,
@@ -112,6 +123,50 @@ class weston::vnc_server (
       group   => 'root',
       mode    => $vnc_options_file_mode,
       content => epp('weston/etc/xdg/weston/vncserver.opts.epp', { 'options' => $vnc_server_options }),
+    }
+  }
+
+  if $manage_systemd_unit_file {
+    systemd::manage_unit { 'system weston vnc unit':
+      ensure        => 'present',
+      name          => "${systemd_template_startswith}@${systemd_template_endswith}",
+      unit_entry    => {
+        'Description' => 'Remote desktop service (VNC) with Weston',
+        'After'       => ['syslog.target', 'network.target', 'systemd-user-sessions.service', 'remote-fs.target'],
+      },
+      service_entry => {
+        'Type'           => 'notify',
+        'User'           => '%I',
+        'PAMName'        => 'login',
+        'Environment'    => 'XDG_SESSION_TYPE=wayland',
+        'ExecStart'      => $vnc_start_script,
+        'StandardOutput' => 'journal',
+        'StandardError'  => 'journal',
+      },
+      install_entry => {
+        'WantedBy' => 'multi-user.target',
+      },
+    }
+  }
+  if $manage_systemd_user_unit_file {
+    systemd::manage_unit { 'user weston vnc unit':
+      ensure        => 'present',
+      name          => "${systemd_user_template_startswith}@${systemd_user_template_endswith}",
+      path          => '/etc/systemd/user',
+      unit_entry    => {
+        'Description' => 'Remote desktop service (VNC) with Weston',
+      },
+      service_entry => {
+        'Type'           => 'notify',
+        'PAMName'        => 'login',
+        'Environment'    => 'XDG_SESSION_TYPE=wayland',
+        'ExecStart'      => "${vnc_start_script} --port %I",
+        'StandardOutput' => 'journal',
+        'StandardError'  => 'journal',
+      },
+      install_entry => {
+        'WantedBy' => 'default.target',
+      },
     }
   }
 
@@ -167,28 +222,6 @@ class weston::vnc_server (
         target  => $vnc_users_file,
         content => "# ${comment}\n# non-root users who can control service for ${username}: ${extra_users_to_grant}\n:${real_displaynumber}=${username}\n",
       }
-    }
-  }
-
-  if $manage_systemd_unit_file {
-    systemd::manage_unit { "${systemd_template_startswith}@${systemd_template_endswith}":
-      ensure        => 'present',
-      unit_entry    => {
-        'Description' => 'Remote desktop service (VNC) with Weston',
-        'After'       => ['syslog.target', 'network.target', 'systemd-user-sessions.service', 'remote-fs.target'],
-      },
-      service_entry => {
-        'Type'           => 'notify',
-        'User'           => '%I',
-        'PAMName'        => 'login',
-        'Environment'    => 'XDG_SESSION_TYPE=wayland',
-        'ExecStart'      => "${vnc_start_script} %I",
-        'StandardOutput' => 'journal',
-        'StandardError'  => 'journal',
-      },
-      install_entry => {
-        'WantedBy' => 'multi-user.target',
-      },
     }
   }
 

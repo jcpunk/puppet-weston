@@ -147,6 +147,9 @@ The following parameters are available in the `weston::vnc_server` class:
 * [`manage_systemd_unit_file`](#-weston--vnc_server--manage_systemd_unit_file)
 * [`systemd_template_startswith`](#-weston--vnc_server--systemd_template_startswith)
 * [`systemd_template_endswith`](#-weston--vnc_server--systemd_template_endswith)
+* [`manage_systemd_user_unit_file`](#-weston--vnc_server--manage_systemd_user_unit_file)
+* [`systemd_user_template_startswith`](#-weston--vnc_server--systemd_user_template_startswith)
+* [`systemd_user_template_endswith`](#-weston--vnc_server--systemd_user_template_endswith)
 * [`vnc_polkit_file`](#-weston--vnc_server--vnc_polkit_file)
 * [`vnc_polkit_file_mode`](#-weston--vnc_server--vnc_polkit_file_mode)
 * [`default_user_can_control_service`](#-weston--vnc_server--default_user_can_control_service)
@@ -284,6 +287,30 @@ What is the 'unit name' of the service
 Default value: `'weston-vncserver'`
 
 ##### <a name="-weston--vnc_server--systemd_template_endswith"></a>`systemd_template_endswith`
+
+Data type: `String`
+
+This should always be `.service` unless you're up to something weird
+
+Default value: `'.service'`
+
+##### <a name="-weston--vnc_server--manage_systemd_user_unit_file"></a>`manage_systemd_user_unit_file`
+
+Data type: `Boolean`
+
+Should this module setup the systemd user template unit
+
+Default value: `true`
+
+##### <a name="-weston--vnc_server--systemd_user_template_startswith"></a>`systemd_user_template_startswith`
+
+Data type: `String`
+
+What is the 'unit name' of the user service
+
+Default value: `'weston-user-vncserver'`
+
+##### <a name="-weston--vnc_server--systemd_user_template_endswith"></a>`systemd_user_template_endswith`
 
 Data type: `String`
 

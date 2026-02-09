@@ -39,7 +39,9 @@ describe 'weston::vnc_server' do
           is_expected.to contain_concat__fragment('vnc user file header')
         }
         it {
-          is_expected.to contain_systemd__manage_unit('weston-vncserver@.service')
+          is_expected.to contain_systemd__manage_unit('system weston vnc unit')
+            .with_ensure('present')
+            .with_name('weston-vncserver@.service')
             .with_unit_entry({
                                'Description' => 'Remote desktop service (VNC) with Weston',
                                'After' => ['syslog.target', 'network.target', 'systemd-user-sessions.service', 'remote-fs.target'],
@@ -49,11 +51,29 @@ describe 'weston::vnc_server' do
                                   'User'           => '%I',
                                   'PAMName'        => 'login',
                                   'Environment'    => 'XDG_SESSION_TYPE=wayland',
-                                  'ExecStart'      => '/usr/libexec/weston-vnc %I',
+                                  'ExecStart'      => '/usr/libexec/weston-vnc',
                                   'StandardOutput' => 'journal',
                                   'StandardError'  => 'journal',
                                 })
             .with_install_entry({ 'WantedBy' => 'multi-user.target', })
+        }
+        it {
+          is_expected.to contain_systemd__manage_unit('user weston vnc unit')
+            .with_ensure('present')
+            .with_name('weston-user-vncserver@.service')
+            .with_path('/etc/systemd/user')
+            .with_unit_entry({
+                               'Description' => 'Remote desktop service (VNC) with Weston',
+                             })
+            .with_service_entry({
+                                  'Type' => 'notify',
+                                  'PAMName'        => 'login',
+                                  'Environment'    => 'XDG_SESSION_TYPE=wayland',
+                                  'ExecStart'      => '/usr/libexec/weston-vnc --port %I',
+                                  'StandardOutput' => 'journal',
+                                  'StandardError'  => 'journal',
+                                })
+            .with_install_entry({ 'WantedBy' => 'default.target', })
         }
         it {
           is_expected.to contain_concat('/etc/polkit-1/rules.d/25-puppet-weston-vnc_server.rules')
@@ -73,6 +93,7 @@ describe 'weston::vnc_server' do
             'manage_vnc_options_file' => false,
             'manage_vnc_users_file' => false,
             'manage_systemd_unit_file' => false,
+            'manage_systemd_user_unit_file' => false,
             'manage_vnc_services' => false,
             'manage_vnc_polkit_file' => false,
           }
@@ -83,7 +104,8 @@ describe 'weston::vnc_server' do
         it { is_expected.not_to contain_file('/usr/libexec/weston-vnc') }
         it { is_expected.not_to contain_file('/etc/xdg/weston/vncserver.opts') }
         it { is_expected.not_to contain_concat('/etc/xdg/weston/vncserver.users') }
-        it { is_expected.not_to contain_systemd__manage_unit('weston-vncserver@.service') }
+        it { is_expected.not_to contain_systemd__manage_unit('system unit: weston-vncserver@.service') }
+        it { is_expected.not_to contain_systemd__manage_unit('user unit: weston-vncserver@.service') }
         it { is_expected.not_to contain_concat('/etc/polkit-1/rules.d/25-puppet-weston-vnc_server.rules') }
       end
 
@@ -99,6 +121,8 @@ describe 'weston::vnc_server' do
             'vnc_users_file_mode' => '2345',
             'systemd_template_startswith' => 'systemd_template_startswith',
             'systemd_template_endswith' => '.path',
+            'systemd_user_template_startswith' => 'systemd_user_template_startswith',
+            'systemd_user_template_endswith' => '.socket',
             'vnc_polkit_file' => '/vnc_polkit_file',
             'vnc_polkit_file_mode' => '3456',
             'default_user_can_control_service' => true,
@@ -160,13 +184,26 @@ describe 'weston::vnc_server' do
             .with_content(%r{^:5902=userA$})
         }
         it {
-          is_expected.to contain_systemd__manage_unit('systemd_template_startswith@.path')
+          is_expected.to contain_systemd__manage_unit('system weston vnc unit')
+            .with_name('systemd_template_startswith@.path')
             .with_service_entry({
                                   'Type' => 'notify',
                                   'User'           => '%I',
                                   'PAMName'        => 'login',
                                   'Environment'    => 'XDG_SESSION_TYPE=wayland',
-                                  'ExecStart'      => '/vnc_start_script %I',
+                                  'ExecStart'      => '/vnc_start_script',
+                                  'StandardOutput' => 'journal',
+                                  'StandardError'  => 'journal',
+                                })
+        }
+        it {
+          is_expected.to contain_systemd__manage_unit('user weston vnc unit')
+            .with_name('systemd_user_template_startswith@.socket')
+            .with_service_entry({
+                                  'Type' => 'notify',
+                                  'PAMName'        => 'login',
+                                  'Environment'    => 'XDG_SESSION_TYPE=wayland',
+                                  'ExecStart'      => '/vnc_start_script --port %I',
                                   'StandardOutput' => 'journal',
                                   'StandardError'  => 'journal',
                                 })
