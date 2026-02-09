@@ -16,7 +16,7 @@ usage() {
 }
 
 OPTS=$(getopt -o '' --long port: -n "$0" -- "$@") || usage
-eval set -- "$OPTS"
+eval set -- "${OPTS}"
 
 PORT=""
 while true; do
@@ -37,9 +37,9 @@ done
 
 USERNAME=$(whoami)
 
-if [[ -f $ENVFILE ]]; then
+if [[ -f "${ENVFILE}" ]]; then
     # shellcheck source=/dev/null
-    source "$ENVFILE"
+    source "${ENVFILE}"
 fi
 
 error_exit() {
@@ -47,32 +47,32 @@ error_exit() {
     exit 1
 }
 
-if [[ -z $PORT ]]; then
-    [[ -f $USERSFILE ]] || error_exit "Users file ${USERSFILE} missing"
+if [[ -z ${PORT} ]]; then
+    [[ -f ${USERSFILE} ]] || error_exit "Users file ${USERSFILE} missing"
 
-    DISPLAY_LINE=$(grep "=${USERNAME}$" "$USERSFILE" | head -1) || true
-    [[ -n $DISPLAY_LINE ]] || error_exit "No display configured for user '${USERNAME}' in ${USERSFILE}, must pass --port"
+    DISPLAY_LINE=$(grep "=${USERNAME}$" "${USERSFILE}" | head -1) || true
+    [[ -n ${DISPLAY_LINE} ]] || error_exit "No display configured for user '${USERNAME}' in ${USERSFILE}, must pass --port"
 
-    DISPLAY_NUM=$(cut -d= -f1 <<<"$DISPLAY_LINE" | tr -d ':')
+    DISPLAY_NUM=$(cut -d= -f1 <<<"${DISPLAY_LINE}" | tr -d ':')
 
     if ((DISPLAY_NUM < <%= $vnc_min_port %>)); then
         PORT=$((DISPLAY_NUM + <%= $vnc_min_port %>))
     else
-        PORT=$DISPLAY_NUM
+        PORT=${DISPLAY_NUM}
     fi
     unset DISPLAY_LINE
     unset DISPLAY_NUM
 else
-    if ! [[ $PORT =~ ^[0-9]+$ ]]; then
+    if ! [[ ${PORT} =~ ^[0-9]+$ ]]; then
         error_exit "Invalid port number: ${PORT}"
     fi
 
     DISPLAY_NUM=$((PORT - <%= $vnc_min_port %>))
     ((DISPLAY_NUM >= 0)) || error_exit "Port number ${PORT} is invalid (must be >= <%= $vnc_min_port %>)"
 
-    if [[ -f $USERSFILE ]]; then
-        ASSIGNED_USER=$(grep -E "^:${PORT}=|^:${DISPLAY_NUM}=" "$USERSFILE" | head -1 | cut -d= -f2)
-        if [[ -n $ASSIGNED_USER && $ASSIGNED_USER != $USERNAME ]]; then
+    if [[ -f "${USERSFILE}" ]]; then
+        ASSIGNED_USER=$(grep -E "^:${PORT}=|^:${DISPLAY_NUM}=" "${USERSFILE}" | head -1 | cut -d= -f2)
+        if [[ -n ${ASSIGNED_USER} && "${ASSIGNED_USER}" != "${USERNAME}" ]]; then
             error_exit "Port ${PORT} is already assigned to user '${ASSIGNED_USER}'"
         fi
         unset ASSIGNED_USER
@@ -80,4 +80,4 @@ else
     unset DISPLAY_NUM
 fi
 
-exec weston --backend=vnc --modules=systemd-notify.so --port="$PORT" ${OPTS}
+exec weston --backend=vnc --modules=systemd-notify.so --port="${PORT}" ${OPTS}
