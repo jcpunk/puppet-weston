@@ -160,7 +160,7 @@ class weston::vnc_server (
         'Description' => 'Remote desktop service (VNC) with Weston',
       },
       service_entry => {
-        'Type'           => 'Exec',
+        'Type'           => 'simple',
         'Environment'    => 'XDG_SESSION_TYPE=wayland',
         'ExecStart'      => "${vnc_start_script} --port %I",
         'StandardOutput' => 'journal',

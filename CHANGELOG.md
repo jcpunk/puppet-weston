@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.6.3
+
+**Bugfixes**
+Tests had incorrect usage semantics
+
 ## Release 0.6.2
 
 **Bugfixes**

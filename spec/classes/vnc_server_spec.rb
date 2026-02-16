@@ -66,8 +66,7 @@ describe 'weston::vnc_server' do
                                'Description' => 'Remote desktop service (VNC) with Weston',
                              })
             .with_service_entry({
-                                  'Type' => 'notify',
-                                  'PAMName'        => 'login',
+                                  'Type' => 'simple',
                                   'Environment'    => 'XDG_SESSION_TYPE=wayland',
                                   'ExecStart'      => '/usr/libexec/weston-vnc --port %I',
                                   'StandardOutput' => 'journal',
@@ -200,8 +199,7 @@ describe 'weston::vnc_server' do
           is_expected.to contain_systemd__manage_unit('user weston vnc unit')
             .with_name('systemd_user_template_startswith@.socket')
             .with_service_entry({
-                                  'Type' => 'notify',
-                                  'PAMName'        => 'login',
+                                  'Type' => 'simple',
                                   'Environment'    => 'XDG_SESSION_TYPE=wayland',
                                   'ExecStart'      => '/vnc_start_script --port %I',
                                   'StandardOutput' => 'journal',
