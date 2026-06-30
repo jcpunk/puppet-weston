@@ -1,6 +1,6 @@
 {
   "name": "jcpunk-weston",
-  "version": "0.6.2",
+  "version": "0.6.4",
   "author": "Pat Riehecky",
   "summary": "Install and manage weston",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 4.2.0 < 10.0.0"
+      "version_requirement": ">= 4.2.0 < 11.0.0"
     },
     {
       "name": "jcpunk/novnc",
@@ -27,6 +27,15 @@
   ],
   "operatingsystem_support": [
     {
+      "operatingsystem": "Fedora"
+    },
+    {
+      "operatingsystem": "AlmaLinux",
+      "operatingsystemrelease": [
+        "10"
+      ]
+    },
+    {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "10"
@@ -34,12 +43,6 @@
     },
     {
       "operatingsystem": "RedHat",
-      "operatingsystemrelease": [
-        "10"
-      ]
-    },
-    {
-      "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "10"
       ]
