@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.7.0
+
+**Features**
+
+* use `notify` for user service now (EL 10.2+)
+
 ## Release 0.6.4
 
 **Features**

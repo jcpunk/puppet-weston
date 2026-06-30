@@ -67,7 +67,6 @@ describe 'weston::vnc_server' do
                              })
             .with_service_entry({
                                   'Type' => 'notify',
-                                  'PAMName'        => 'login',
                                   'Environment'    => 'XDG_SESSION_TYPE=wayland',
                                   'ExecStart'      => '/usr/libexec/weston-vnc --port %I',
                                   'StandardOutput' => 'journal',
@@ -201,7 +200,6 @@ describe 'weston::vnc_server' do
             .with_name('systemd_user_template_startswith@.socket')
             .with_service_entry({
                                   'Type' => 'notify',
-                                  'PAMName'        => 'login',
                                   'Environment'    => 'XDG_SESSION_TYPE=wayland',
                                   'ExecStart'      => '/vnc_start_script --port %I',
                                   'StandardOutput' => 'journal',
